@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAP-A Care</title>
+<meta name="description" content="MAP-A Care finds the nearest hospital in Albay that can treat the patient, has a bed that is not reported full and accepts what the family can pay, by ambulance or by jeepney, van, bus and on foot, with backups and planning tools for the health office.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#160C0C" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MAP-A Care">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<style id="care-site-css">
+
+/* Layout: the MAP-A landing page design. Crimson hero with two phones, an install band with the app icon, features as screen-and-copy rows, planning tools on deep red, the method drawn as a route with stops, then credits under the official logo and policies. */
+:root{
+  --paper:#FFFFFF;
+  --paper-2:#FFF7E8;
+  --paper-3:#FDEFD2;
+  --ink:#2A1613;
+  --ink-2:#6B5048;
+  --rule:#EFDDC2;
+  --red:#A3161F;
+  --red-deep:#6E0C13;
+  --red-ink:#A3161F;
+  --gold:#E0A92A;
+  --gold-lt:#F6D06B;
+  --gold-ink:#8A5B00;
+  --on-gold:#3A1A06;
+  --on-red:#FFF5DE;
+  --on-red-2:#F1D6AC;
+  --on-red-rule:rgba(255,245,222,.24);
+  --hero-a:#A3161F;
+  --hero-b:#5E0A10;
+  --phone:#1C0F0E;
+  --map-d1:#F2C55C;
+  --map-d2:#C8303B;
+  --map-d3:#7E1019;
+  --map-line:#FFFFFF;
+  --map-pin:#FFFFFF;
+  --map-pin-ink:#2A1613;
+  --focus:#2A1613;
+  --shadow:0 22px 44px -22px rgba(70,12,12,.45);
+  --logo-bg:#320611;
+  --logo-ring:rgba(110,12,19,.2);
+  --f-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --f-body:"Overpass",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"Overpass Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --t-xs:.75rem;
+  --t-sm:.875rem;
+  --t-base:1.0625rem;
+  --t-md:1.25rem;
+  --t-h3:clamp(1.75rem,1.4rem + 1.3vw,2.4rem);
+  --t-h2:clamp(2.25rem,1.5rem + 2.8vw,3.6rem);
+  --t-h1:clamp(2.9rem,1.6rem + 5.2vw,5.9rem);
+  --gutter:clamp(1rem,4vw,2.5rem);
+  --section:clamp(3.5rem,8vw,6.5rem);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#160C0C;--paper-2:#1F1210;--paper-3:#2A1814;--ink:#FBEFD9;--ink-2:#CDB6A2;--rule:#3A251F;
+    --red:#B81E28;--red-deep:#4B0910;--red-ink:#FF8D92;--gold:#E9B949;--gold-lt:#F6D06B;--gold-ink:#F0C463;--on-gold:#3A1A06;
+    --on-red:#FFF5DE;--on-red-2:#EBCB9C;--on-red-rule:rgba(255,245,222,.18);--hero-a:#8E1219;--hero-b:#36050A;--phone:#0B0606;
+    --map-d1:#D7A53A;--map-d2:#B32630;--map-d3:#6A0E16;--map-line:#160C0C;--map-pin:#FBEFD9;--map-pin-ink:#2A1613;
+    --focus:#FBEFD9;--shadow:0 22px 44px -22px rgba(0,0,0,.7);--logo-ring:rgba(246,208,107,.24);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#160C0C;--paper-2:#1F1210;--paper-3:#2A1814;--ink:#FBEFD9;--ink-2:#CDB6A2;--rule:#3A251F;
+  --red:#B81E28;--red-deep:#4B0910;--red-ink:#FF8D92;--gold:#E9B949;--gold-lt:#F6D06B;--gold-ink:#F0C463;--on-gold:#3A1A06;
+  --on-red:#FFF5DE;--on-red-2:#EBCB9C;--on-red-rule:rgba(255,245,222,.18);--hero-a:#8E1219;--hero-b:#36050A;--phone:#0B0606;
+  --map-d1:#D7A53A;--map-d2:#B32630;--map-d3:#6A0E16;--map-line:#160C0C;--map-pin:#FBEFD9;--map-pin-ink:#2A1613;
+  --focus:#FBEFD9;--shadow:0 22px 44px -22px rgba(0,0,0,.7);--logo-ring:rgba(246,208,107,.24);color-scheme:dark;
+}
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font:400 var(--t-base)/1.6 var(--f-body)}
+a{color:var(--red-ink)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+[id]{scroll-margin-top:6rem}
+.wrap{max-width:76rem;margin-inline:auto;padding-inline:var(--gutter)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h2,h3{text-wrap:balance}
+
+/* Header */
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--paper);border-bottom:1px solid var(--rule)}
+.hdr-in{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem 1.4rem;min-height:4.25rem}
+.brand{display:inline-flex;align-items:center;gap:.6rem;color:var(--ink);text-decoration:none}
+.logo{display:block;flex:none;aspect-ratio:1/1;max-width:100%;border-radius:22%;background:var(--logo-bg) var(--logo) center/cover no-repeat;box-shadow:0 0 0 1px var(--logo-ring)}
+.logo-mk{width:2.75rem;border-radius:.6rem;background-image:var(--logo-sm)}
+.wm{display:inline-flex;align-items:center;font:800 1.7rem/1 var(--f-display);letter-spacing:.01em;color:var(--ink)}
+.nav{margin-left:auto;display:flex;gap:1.3rem;font:600 var(--t-sm)/1 var(--f-body)}
+.nav a{color:var(--ink-2);text-decoration:none;padding-block:.6rem;white-space:nowrap}
+.nav a:hover{color:var(--red-ink)}
+.hdr-actions{display:flex;gap:.5rem}
+.hdr-actions:empty{display:none}
+@media (max-width:959px){
+  .hdr-in{min-height:0;padding-block:.6rem .1rem}
+  .nav{order:3;width:100%;margin-left:0;overflow-x:auto;gap:1.05rem;font-size:.8125rem;scrollbar-width:none}
+  .hdr-actions{margin-left:auto}
+}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.92rem 1.25rem .84rem;border:2px solid transparent;border-radius:4px;font:700 1rem/1 var(--f-body);text-decoration:none;cursor:pointer;transition:background-color .15s ease}
+.btn-gold{background:var(--gold-lt);border-color:var(--gold-lt);color:var(--on-gold)}
+.btn-gold:hover{background:var(--gold)}
+.btn-line{color:var(--on-red);border-color:var(--on-red-2)}
+.btn-line:hover{background:rgba(255,245,222,.1)}
+.btn-ghost{color:var(--red-ink);border-color:var(--red-ink)}
+.btn-ghost:hover{background:var(--paper)}
+.btn-red{background:var(--red);border-color:var(--red);color:var(--on-red)}
+.btn-red:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.btn-sm{padding:.62rem .85rem .55rem;font-size:var(--t-sm)}
+.btn-lg{padding:1.05rem 1.45rem .97rem;font-size:1.0625rem}
+.btn .ico{width:1.2em;height:1.2em;flex:none;margin-top:-.12em}
+
+/* Shared type */
+.section{padding-block:var(--section)}
+.alt{background:var(--paper-2);border-block:1px solid var(--rule)}
+.eyebrow{margin:0;font:600 var(--t-xs)/1.4 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--red-ink)}
+.sec-head{display:grid;gap:.8rem;margin-bottom:clamp(2.25rem,4.5vw,3.5rem);max-width:48rem}
+.sec-head h2{margin:0;font:700 var(--t-h2)/1 var(--f-display);letter-spacing:-.005em}
+.sec-head p:not(.eyebrow){margin:0;color:var(--ink-2);max-width:62ch}
+.fine{font:500 var(--t-xs)/1.55 var(--f-mono);letter-spacing:.02em;color:var(--ink-2)}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;isolation:isolate;color:var(--on-red);background:linear-gradient(165deg,var(--hero-a) 0%,var(--hero-b) 82%);padding-block:clamp(2.5rem,6vw,4.75rem) 0}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:repeating-conic-gradient(from -90deg at 74% 104%,rgba(246,208,107,.16) 0deg 4.5deg,transparent 4.5deg 9deg);
+  -webkit-mask-image:radial-gradient(72% 95% at 74% 104%,#000 0%,transparent 78%);
+  mask-image:radial-gradient(72% 95% at 74% 104%,#000 0%,transparent 78%)}
+.hero-grid{display:grid;gap:2.75rem;align-items:center}
+@media (min-width:900px){.hero-grid{grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:3rem}}
+.hero-copy{display:grid;gap:1.2rem;justify-items:start;min-width:0}
+.kicker{margin:0;font:600 var(--t-xs)/1.45 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-lt)}
+.hero h1{margin:0;font:800 var(--t-h1)/.93 var(--f-display);letter-spacing:-.005em;text-wrap:balance;max-width:13.5ch}
+.lede{margin:0;max-width:52ch;color:var(--on-red-2);font-size:clamp(1.0625rem,1rem + .35vw,1.25rem);line-height:1.55}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.4rem}
+.hero-note{margin:0;font:600 var(--t-xs)/1.5 var(--f-mono);letter-spacing:.02em;color:var(--on-red-2)}
+.hero-phones{position:relative;justify-self:center;width:min(100%,26rem);padding-top:1.25rem}
+.hero-route{position:absolute;left:-12%;top:-4%;width:124%;height:106%;overflow:visible;z-index:0;pointer-events:none}
+.hr-path{fill:none;stroke:var(--gold-lt);stroke-width:5;stroke-linecap:round;stroke-dasharray:2 13;animation:flow 2.6s linear infinite}
+.hr-a{fill:var(--hero-b);stroke:var(--gold-lt);stroke-width:6}
+.hr-pin{fill:var(--gold-lt)}
+.hr-pin-dot{fill:var(--hero-a)}
+@keyframes flow{to{stroke-dashoffset:-30}}
+.hero-phones .phone-back{position:absolute;left:0;top:3.5rem;width:52%;transform:rotate(-7deg);z-index:1}
+.hero-phones .phone-front{position:relative;margin-left:auto;width:58%;z-index:2}
+@media (max-width:899px){.hero-phones{width:min(100%,21rem)}}
+.hero-facts{margin:clamp(2.5rem,5vw,3.5rem) 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--on-red-rule)}
+.hero-facts>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:.3rem;padding:1rem 1rem 1.35rem;border-left:1px solid var(--on-red-rule);min-width:0}
+.hero-facts>div:nth-child(2n+1){border-left:0;padding-left:0}
+.hero-facts>div:nth-child(n+3){border-top:1px solid var(--on-red-rule)}
+@media (min-width:760px){
+  .hero-facts{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hero-facts>div:nth-child(2n+1){border-left:1px solid var(--on-red-rule);padding-left:1rem}
+  .hero-facts>div:first-child{border-left:0;padding-left:0}
+  .hero-facts>div:nth-child(n+3){border-top:0}
+}
+.hero-facts dd{margin:0;font:700 clamp(2.2rem,1.8rem + 2vw,3.2rem)/1 var(--f-display);color:var(--gold-lt);font-variant-numeric:tabular-nums}
+.hero-facts dt{font:600 var(--t-xs)/1.35 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--on-red-2)}
+
+/* Phone frame */
+.phone{margin:0;position:relative;display:block;aspect-ratio:560/1212;max-width:100%;border-radius:2.1rem;padding:.5rem;background:var(--phone);box-shadow:var(--shadow),inset 0 0 0 1px rgba(255,255,255,.1)}
+.phone img{display:block;width:100%;height:100%;object-fit:cover;border-radius:1.65rem}
+
+/* Install */
+.install-grid{display:grid;gap:2.75rem;align-items:start}
+@media (min-width:900px){.install-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(3rem,6vw,5rem)}}
+.get{display:grid;gap:1.35rem;justify-items:start;min-width:0}
+.app-id{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.25rem;min-width:0}
+.logo-app{width:clamp(5.5rem,4.6rem + 3.6vw,7.25rem);box-shadow:var(--shadow),0 0 0 1px var(--logo-ring)}
+.app-name{display:grid;gap:.5rem;flex:1 1 14rem;min-width:0}
+.app-name h2{margin:0;font:700 var(--t-h2)/1 var(--f-display);letter-spacing:-.005em}
+.get-lede{margin:0;max-width:54ch;color:var(--ink-2)}
+.get-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem}
+.install-status{margin:0;max-width:44ch;font:600 var(--t-sm)/1.45 var(--f-body);color:var(--ink)}
+.install-status:empty{display:none}
+.app-facts{margin:0;justify-self:stretch;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.25rem;border-top:2px solid var(--ink)}
+.app-facts>div{display:grid;gap:.2rem;align-content:start;padding:.85rem 0 .9rem;border-bottom:1px solid var(--rule);min-width:0}
+.app-facts dt{font:600 var(--t-xs)/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.app-facts dd{margin:0;font:700 1.05rem/1.35 var(--f-body)}
+.get .fine{margin:0;max-width:60ch}
+.get-file a{color:var(--red-ink);font-weight:700}
+.how-install{display:grid;gap:1.1rem;min-width:0;background:var(--paper);border:1px solid var(--rule);border-top:6px solid var(--red);padding:clamp(1.25rem,3vw,2rem);box-shadow:var(--shadow)}
+.how-install h3{margin:0;font:700 1.6rem/1.1 var(--f-display)}
+.plat-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem}
+.plat-tabs button{padding:.72rem .5rem .64rem;border:1.5px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);font:700 var(--t-sm)/1.2 var(--f-body);text-align:center;cursor:pointer}
+.plat-tabs button:hover{border-color:var(--ink-2)}
+.plat-tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.inst-steps{list-style:none;margin:0;padding:0;counter-reset:step;border-top:2px solid var(--ink)}
+.inst-steps li{counter-increment:step;display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.9rem;align-items:start;padding:.95rem 0;border-bottom:1px solid var(--rule)}
+.inst-steps li::before{content:counter(step);display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--red);color:var(--on-red);font:700 .9rem/1 var(--f-mono)}
+.how-install .fine{margin:0}
+
+/* Features */
+.feat-list{display:grid;gap:clamp(3.25rem,7vw,5.5rem)}
+.feat-row{display:grid;gap:1.75rem;align-items:center}
+@media (min-width:820px){
+  .feat-row{grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:clamp(2.5rem,6vw,5rem)}
+  .feat-row.flip{grid-template-columns:minmax(0,1fr) minmax(0,15rem)}
+  .feat-row.flip .phone{order:2}
+}
+@media (max-width:819px){.feat-row .phone{width:min(16.5rem,76%);justify-self:center}}
+.feat-copy{min-width:0;display:grid;gap:.85rem;align-content:start;max-width:36rem}
+.feat-copy h3{margin:0;font:700 var(--t-h3)/1.04 var(--f-display)}
+.feat-copy p{margin:0;color:var(--ink-2)}
+.ticks{list-style:none;margin:.15rem 0 0;padding:0;display:grid;gap:.55rem}
+.ticks li{position:relative;padding-left:1.65rem}
+.ticks li::before{content:"";position:absolute;left:.1rem;top:.42em;width:.78rem;height:.78rem;border-radius:50%;border:3px solid var(--gold);background:var(--paper)}
+.cap{margin:0;font:500 var(--t-xs)/1.5 var(--f-mono);color:var(--ink-2)}
+.also{margin-top:clamp(3rem,6vw,4.5rem);display:grid;gap:1rem}
+.also h3{margin:0;font:700 1.6rem/1.1 var(--f-display)}
+.also ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:1.25rem;border-top:2px solid var(--ink)}
+@media (max-width:899px){.also ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.also ul{grid-template-columns:minmax(0,1fr)}}
+.also li{display:grid;gap:.2rem;padding:1rem 1rem 1.1rem 0;border-bottom:1px solid var(--rule);min-width:0}
+.also li b{font:700 1.05rem/1.3 var(--f-body)}
+.also li span{color:var(--ink-2);font-size:var(--t-sm)}
+.model-note{margin:2rem 0 0;max-width:70ch}
+
+/* Fare calculator */
+.calc-grid{display:grid;gap:2.25rem}
+@media (min-width:980px){.calc-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3.5rem;align-items:start}}
+.calc{min-width:0;background:var(--paper);border:1px solid var(--rule);border-top:6px solid var(--red);padding:clamp(1.25rem,3vw,2rem);display:grid;gap:1.2rem;box-shadow:var(--shadow)}
+.seg{border:0;margin:0;padding:0;min-width:0}
+.seg legend,.lbl{display:block;padding:0;margin-bottom:.55rem;font:600 var(--t-xs)/1.2 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.seg-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(7rem,1fr));gap:.4rem}
+.seg-btns button{padding:.72rem .55rem .64rem;border:1.5px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);font:700 var(--t-sm)/1.2 var(--f-body);cursor:pointer;text-align:center}
+.seg-btns button:hover{border-color:var(--red)}
+.seg-btns button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--on-red)}
+.km-row{display:grid;grid-template-columns:minmax(0,1fr) 6.75rem;gap:.85rem;align-items:center}
+.km-row input[type=range]{width:100%;accent-color:var(--red)}
+.km-row input[type=number]{width:100%;padding:.62rem .6rem .52rem;border:1.5px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);font:600 1rem/1 var(--f-mono)}
+.result{display:grid;gap:.25rem;padding-top:.4rem;border-top:2px solid var(--ink)}
+.total{display:block;font:800 clamp(3rem,2.4rem + 2.6vw,4.4rem)/1 var(--f-display);color:var(--red-ink);font-variant-numeric:tabular-nums}
+.total-lbl{font:600 var(--t-xs)/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.breakdown{margin:.4rem 0 0;display:grid}
+.breakdown div{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--rule);font-size:var(--t-sm)}
+.breakdown dt{color:var(--ink-2);min-width:0}
+.breakdown dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.matrix{min-width:0;display:grid;gap:1.4rem}
+.matrix h3{margin:0;font:700 1.6rem/1.1 var(--f-display)}
+.formula{margin:0;padding:.85rem 1rem;background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--gold);font:600 1rem/1.5 var(--f-mono);overflow-x:auto;white-space:nowrap}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.tbl th{text-align:left;font:600 var(--t-xs)/1.3 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);padding:.6rem .5rem;border-bottom:2px solid var(--ink)}
+.tbl td{padding:.62rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.tbl .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl th.num{text-align:right}
+
+/* Hospital mode */
+.hosp{background:var(--red-deep);color:var(--on-red);padding-block:var(--section);--focus:var(--on-red)}
+.hosp .eyebrow{color:var(--gold-lt)}
+.hosp .sec-head p:not(.eyebrow),.hosp .fine{color:var(--on-red-2)}
+.hosp-grid{display:grid;gap:2.75rem;align-items:start}
+@media (min-width:900px){.hosp-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:4rem}}
+.hosp-phones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;max-width:31rem;min-width:0}
+.hosp-phones .phone:last-child{margin-top:2.5rem}
+.hosp-copy{display:grid;gap:1.4rem;min-width:0}
+.hosp .ticks li::before{border-color:var(--gold-lt);background:var(--red-deep)}
+.notice{margin:0;padding:1rem 1.15rem;border:1.5px solid var(--gold-lt);display:grid;gap:.35rem}
+.notice b{font:800 1.15rem/1.25 var(--f-body);color:var(--gold-lt)}
+.notice span{color:var(--on-red-2)}
+.agents{margin-top:clamp(3.5rem,7vw,5rem);display:grid;gap:1.5rem}
+.agents h3,.beds h3{margin:0;font:700 var(--t-h3)/1.05 var(--f-display)}
+.agents>p{margin:0;color:var(--on-red-2);max-width:62ch}
+.guar{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(12.5rem,1fr));border-top:1px solid var(--on-red-rule)}
+.guar>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:.35rem;padding:1rem 1rem 1.2rem 0;border-bottom:1px solid var(--on-red-rule);min-width:0}
+.guar dd{margin:0;font:700 2.4rem/1 var(--f-display);color:var(--gold-lt);font-variant-numeric:tabular-nums}
+.guar dt{color:var(--on-red-2);font-size:var(--t-sm)}
+.beds{margin-top:clamp(3.5rem,7vw,5rem);display:grid;gap:2rem;align-items:center}
+@media (min-width:820px){.beds{grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:3.5rem}}
+@media (max-width:819px){.beds .phone{width:min(15rem,70%)}}
+.beds-copy{display:grid;gap:.85rem;min-width:0;max-width:38rem}
+.beds-copy p{margin:0;color:var(--on-red-2)}
+.care-cta{margin-top:clamp(3.5rem,7vw,5rem);padding:clamp(1.4rem,3vw,2rem);border:1.5px solid var(--gold-lt);display:grid;gap:.9rem;max-width:62rem}
+.care-cta h3{margin:0;font:700 var(--t-h3)/1.05 var(--f-display)}
+.care-cta>p{margin:0;color:var(--on-red-2);max-width:62ch}
+.care-cta ul{margin:0;padding-left:1.15rem;color:var(--on-red-2);display:grid;gap:.3rem}
+.care-acts{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.3rem}
+.status{margin:clamp(2.5rem,5vw,3.5rem) 0 0;padding-top:1.25rem;border-top:1px solid var(--on-red-rule);max-width:72ch}
+
+/* Route with stops (agents and pipeline) */
+.stops{list-style:none;margin:0;padding:0;display:grid;--route:var(--red);--stop-bg:var(--paper-2);--stop-ink:var(--ink-2)}
+.stops li{position:relative;display:grid;gap:.45rem;align-content:start;min-width:0}
+.stops li::before{content:"";position:absolute;width:1.15rem;height:1.15rem;border-radius:50%;background:var(--stop-bg);border:3.5px solid var(--route);z-index:1}
+.stops li:last-child::before{background:var(--route)}
+.stops .st{font:600 var(--t-xs)/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stop-ink)}
+.stops h4{margin:0;font:700 1.12rem/1.3 var(--f-body)}
+.stops p{margin:0;color:var(--stop-ink);font-size:var(--t-sm)}
+.stops.on-red{--route:var(--gold-lt);--stop-bg:var(--red-deep);--stop-ink:var(--on-red-2)}
+@media (min-width:900px){
+  .stops{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));row-gap:2.5rem}
+  .stops li{padding:1.75rem 1.4rem 0 0;border-top:3px dashed var(--route)}
+  .stops li::before{top:-.72rem;left:0}
+}
+@media (max-width:899px){
+  .stops li{margin-left:.55rem;padding:0 0 1.75rem 1.6rem;border-left:3px dashed var(--route)}
+  .stops li:last-child{border-left-color:transparent;padding-bottom:0}
+  .stops li::before{top:0;left:-.73rem}
+}
+
+/* Coverage */
+.cov-grid{display:grid;gap:2.25rem;align-items:start}
+@media (min-width:980px){.cov-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:3.25rem}}
+.cov-map{margin:0;min-width:0;display:grid;gap:.75rem}
+.albay{display:block;width:100%;height:auto}
+.albay .lgu{stroke:var(--map-line);stroke-width:1.2;stroke-linejoin:round}
+.albay .lgu.d1{fill:var(--map-d1)}
+.albay .lgu.d2{fill:var(--map-d2)}
+.albay .lgu.d3{fill:var(--map-d3)}
+.albay .lgu.on{stroke:var(--ink);stroke-width:2.4}
+.albay .pin{cursor:default}
+.albay .pin circle{fill:var(--map-pin);stroke:var(--map-pin-ink);stroke-width:1.5}
+.albay .pin text{font:700 11px var(--f-mono);fill:var(--map-pin-ink);text-anchor:middle;dominant-baseline:central}
+@media (max-width:640px){.albay .pin circle{r:13px}.albay .pin text{font-size:13.5px}.albay .mayon text{font-size:15px}.albay .scale text{font-size:14px}}
+.albay .pin.on circle{fill:var(--gold-lt)}
+.albay .mayon path{fill:var(--ink);stroke:var(--paper);stroke-width:1.5}
+.albay .mayon text{font:700 11.5px var(--f-body);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px}
+.albay .scale path{fill:none;stroke:var(--ink);stroke-width:1.6}
+.albay .scale text{font:600 10.5px var(--f-mono);fill:var(--ink)}
+.districts{display:grid;gap:1.9rem;min-width:0}
+.district h3{display:flex;align-items:center;gap:.6rem;margin:0 0 .35rem;padding-bottom:.5rem;border-bottom:2px solid var(--ink);font:700 1.45rem/1 var(--f-display)}
+.sw{width:1rem;height:1rem;flex:none;border:1px solid var(--rule)}
+.sw.d1{background:var(--map-d1)} .sw.d2{background:var(--map-d2)} .sw.d3{background:var(--map-d3)}
+.district ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 1rem}
+.district li{display:flex;align-items:center;gap:.55rem;padding:.38rem 0;font-weight:600;min-width:0}
+.district li .n{display:inline-grid;place-items:center;width:1.55rem;height:1.55rem;border-radius:50%;border:1.5px solid var(--ink);font:700 .72rem/1 var(--f-mono);flex:none}
+.district li.on .n{background:var(--gold-lt);border-color:var(--gold-lt);color:var(--on-gold)}
+.district .meta{margin:.55rem 0 0}
+
+/* Verification */
+.stats{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:1.25rem;border-top:2px solid var(--ink)}
+@media (max-width:899px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}}
+.stats>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:.45rem;padding:1.25rem 1.25rem 1.45rem 0;border-bottom:1px solid var(--rule);min-width:0}
+.stats dd{margin:0;font:700 clamp(2.3rem,1.9rem + 1.6vw,3.1rem)/1 var(--f-display);color:var(--red-ink);font-variant-numeric:tabular-nums}
+.stats dt{color:var(--ink-2);font-size:var(--t-sm);max-width:34ch}
+.verify-note{margin:1.5rem 0 0;max-width:72ch}
+
+/* Data sources */
+.two-col{display:grid;gap:1rem}
+@media (min-width:900px){.two-col{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:4rem;align-items:start}.two-col .sec-head{margin-bottom:0}}
+.sources{margin:0;display:grid;border-top:2px solid var(--ink)}
+.sources>div{display:grid;gap:.2rem;padding-block:.95rem;border-bottom:1px solid var(--rule);min-width:0}
+@media (min-width:560px){.sources>div{grid-template-columns:12rem minmax(0,1fr);gap:1.5rem}}
+.sources dt{font:600 var(--t-sm)/1.5 var(--f-mono)}
+.sources dd{margin:0;color:var(--ink-2)}
+
+/* About */
+.about-grid{display:grid;gap:2.25rem;align-items:center}
+@media (min-width:880px){.about-grid{grid-template-columns:minmax(0,21rem) minmax(0,1fr);gap:4.5rem}}
+.logo-seal{width:min(100%,21rem);justify-self:center;border-radius:1.75rem;box-shadow:var(--shadow),0 0 0 1px var(--logo-ring)}
+.about-copy{display:grid;gap:1.1rem;min-width:0}
+.about-copy h2{margin:0;font:700 clamp(1.9rem,1.4rem + 1.9vw,2.9rem)/1.05 var(--f-display)}
+.about-copy>p{margin:0;color:var(--ink-2);max-width:64ch}
+.people{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 1.5rem;border-top:2px solid var(--ink)}
+@media (max-width:520px){.people{grid-template-columns:minmax(0,1fr)}}
+.people>div{padding:.9rem 0;border-bottom:1px solid var(--rule);min-width:0}
+.people dt{font:600 var(--t-xs)/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.people dd{margin:.3rem 0 0;font-weight:700}
+.sdg{display:flex;flex-wrap:wrap;gap:.5rem;margin:0;padding:0;list-style:none}
+.sdg li{padding:.45rem .65rem .38rem;border:1.5px solid var(--gold);border-radius:3px;font:600 var(--t-xs)/1.2 var(--f-mono);letter-spacing:.04em}
+
+/* Policies */
+.legal details{border-top:1px solid var(--rule)}
+.legal details:last-of-type{border-bottom:1px solid var(--rule)}
+.legal summary{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-block:1.1rem;cursor:pointer;list-style:none;font:700 var(--t-md)/1.3 var(--f-body)}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary::after{content:"+";flex:none;font:400 1.75rem/1 var(--f-mono);color:var(--red-ink)}
+.legal details[open] summary::after{content:"\2212"}
+.policy{display:grid;gap:.85rem;max-width:68ch;padding-bottom:1.75rem}
+.policy h3{margin:.4rem 0 0;font:700 var(--t-base)/1.4 var(--f-body)}
+.policy p{margin:0;color:var(--ink-2)}
+
+/* Footer */
+.foot{padding-block:2.5rem;background:var(--paper-2);border-top:1px solid var(--rule)}
+.foot-grid{display:grid;gap:1.5rem}
+@media (min-width:760px){.foot-grid{grid-template-columns:minmax(0,1fr) auto;align-items:end}}
+.foot-brand{display:grid;gap:.6rem;justify-items:start}
+.foot-brand p{margin:0;color:var(--ink-2);font-size:var(--t-sm)}
+.foot nav{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+.foot nav a{color:var(--ink);font-weight:600;font-size:var(--t-sm);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em}
+.foot .fine{grid-column:1 / -1;margin:0}
+
+@media (prefers-reduced-motion: reduce){.hr-path{animation:none}.btn{transition:none}}
+
+/* Official logo of the Landmark-Anchored Research Initiative, embedded so the page also works offline */
+:root{--logo:url("icons/icon-512.png");--logo-sm:url("icons/icon-192.png")}
+.logo-seal{background-image:url("assets/official-logo.webp")}
+.hosp-copy .ticks b{color:var(--gold-lt)}
+.about-copy .fine a{color:inherit;font-weight:700}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@500;600;700&display=swap">
+<div id="mapa-root">
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="#top" aria-label="MAP-A Care, back to top">
+      <span class="logo logo-mk" aria-hidden="true"></span>
+      <span class="wm" aria-hidden="true">MAP-A Care</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#planning">Planning tools</a>
+      <a href="#how">How it works</a>
+      <a href="#verified">Verification</a>
+      <a href="#about">About</a>
+      <a href="#legal">Policies</a>
+    </nav>
+    <div class="hdr-actions"><a class="btn btn-red btn-sm" href="#install" data-install><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5v11.5m0 0-4.6-4.6M12 15l4.6-4.6M4.5 15.5v4h15v-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Install app</span></a></div>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">Tamang ospital, tamang kama, tamang oras</p>
+        <h1>The right hospital, with a bed, at a cost the family can carry.</h1>
+        <p class="lede">MAP-A Care finds the nearest hospital in Albay that can treat the patient, has a bed that is not reported full, and accepts what the family can pay. By ambulance, or by jeepney, van, bus and on foot. If the first hospital turns the patient away, the next two are already on the screen.</p>
+        <div class="actions">
+          <a class="btn btn-gold" href="#install" data-install><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5v11.5m0 0-4.6-4.6M12 15l4.6-4.6M4.5 15.5v4h15v-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Install MAP-A Care</span></a>
+          <a class="btn btn-line" href="app/" data-hosted-only>Open in browser</a>
+        </div>
+        <p class="hero-note">Free for Android, iPhone and computers. Installs from your browser, with no app store.</p>
+      </div>
+      <div class="hero-phones">
+        <svg class="hero-route" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+          <path class="hr-path" d="M26 496C40 410 120 420 150 330S250 150 300 96S356 52 372 42"/>
+          <circle class="hr-a" cx="26" cy="496" r="12"/>
+          <path class="hr-pin" d="M372 42C366 30 352 22 352 6A20 20 0 1 1 392 6C392 22 378 30 372 42Z"/>
+          <circle class="hr-pin-dot" cx="372" cy="6" r="7"/>
+        </svg>
+        <figure class="phone phone-back"><img src="assets/screens/home.webp" alt="MAP-A Care home screen: a Call 911 button, where the patient is, how the patient travels, and how the patient is." decoding="async"></figure>
+        <figure class="phone phone-front"><img src="assets/screens/result.webp" alt="A result: the first-choice hospital with travel time, level, services, cost class and bed status, and two backup hospitals with the extra minutes each costs." decoding="async"></figure>
+      </div>
+    </div>
+    <dl class="hero-facts">
+      <div><dt>Hospitals and infirmaries</dt><dd>29</dd></div>
+      <div><dt>Services matched to each hospital</dt><dd>8</dd></div>
+      <div><dt>Cities and municipalities</dt><dd>18</dd></div>
+      <div><dt>Planning tools for the health office</dt><dd>5</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section alt" id="install" aria-labelledby="install-h">
+  <div class="wrap install-grid">
+    <div class="get">
+      <div class="app-id">
+        <span class="logo logo-app" role="img" aria-label="MAP-A Care app icon"></span>
+        <div class="app-name">
+          <p class="eyebrow">Download the app</p>
+          <h2 id="install-h">Get MAP-A Care on your phone</h2>
+        </div>
+      </div>
+      <p class="get-lede">Install MAP-A Care straight from this page. It gets its own icon on your home screen, opens in its own window, and keeps finding hospitals when the signal drops.</p>
+      <div class="get-actions">
+        <button type="button" class="btn btn-red btn-lg" id="install-btn" data-install><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5v11.5m0 0-4.6-4.6M12 15l4.6-4.6M4.5 15.5v4h15v-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Install MAP-A Care</span></button>
+        <a class="btn btn-ghost btn-lg" href="app/" id="open-app" data-hosted-only><span>Open in browser</span></a>
+      </div>
+      <p class="install-status" id="install-status" role="status" aria-live="polite"></p>
+      <dl class="app-facts">
+        <div><dt>Price</dt><dd>Free</dd></div>
+        <div><dt>Version</dt><dd>1.0</dd></div>
+        <div><dt>Size</dt><dd>About 2 MB</dd></div>
+        <div><dt>Works on</dt><dd>Android, iPhone, iPad and computers</dd></div>
+      </dl>
+      <p class="fine">Without a signal, the hospital search, the backups, the route network and the planning tools keep working. The background map and place search need a connection.</p>
+      <p class="fine get-file" data-hosted-only><a href="app/index.html" download="MAP-A-Care.html"><span>Download the app as one file</span></a> <span>(MAP-A-Care.html, about 0.9 MB). It opens in any browser without installing.</span></p>
+    </div>
+    <div class="how-install">
+      <h3 id="steps-h">How to install</h3>
+      <div class="plat-tabs" role="tablist" aria-labelledby="steps-h">
+        <button type="button" role="tab" id="tab-android" aria-controls="steps-android" aria-selected="true" data-plat="android"><span>Android</span></button>
+        <button type="button" role="tab" id="tab-ios" aria-controls="steps-ios" aria-selected="false" tabindex="-1" data-plat="ios"><span>iPhone and iPad</span></button>
+        <button type="button" role="tab" id="tab-desktop" aria-controls="steps-desktop" aria-selected="false" tabindex="-1" data-plat="desktop"><span>Computer</span></button>
+      </div>
+      <ol class="inst-steps" id="steps-android" role="tabpanel" aria-labelledby="tab-android" tabindex="0">
+        <li>Open this page in Chrome.</li>
+        <li>Tap Install MAP-A Care. If no install window opens, tap the ⋮ menu, then Add to Home screen or Install app.</li>
+        <li>Tap Install. MAP-A Care appears on your home screen and in your app list.</li>
+      </ol>
+      <ol class="inst-steps" id="steps-ios" role="tabpanel" aria-labelledby="tab-ios" tabindex="0" hidden>
+        <li>Tap Open in browser to open the app in Safari.</li>
+        <li>Tap the Share button, the square with an arrow pointing up. If you do not see it, tap ⋯ first.</li>
+        <li>Tap Add to Home Screen, then Add. MAP-A Care appears on your home screen.</li>
+      </ol>
+      <ol class="inst-steps" id="steps-desktop" role="tabpanel" aria-labelledby="tab-desktop" tabindex="0" hidden>
+        <li>Open this page in Chrome or Microsoft Edge. On a Mac you can also use Safari.</li>
+        <li>Click Install MAP-A Care, or the install icon at the right end of the address bar. In Safari, choose File, then Add to Dock.</li>
+        <li>Click Install. MAP-A Care opens in its own window, and you can pin it to the taskbar or Dock.</li>
+      </ol>
+      <p class="fine">To remove MAP-A Care, uninstall it like any other app. The copy kept for offline use is removed with it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Features</p>
+      <h2>Built around the patient, not the map</h2>
+      <p>The nearest hospital is often the wrong one. It may be full, it may lack the service the patient needs, or it may cost more than the family can pay. Every screen below comes from the working app.</p>
+    </header>
+    <div class="feat-list">
+      <article class="feat-row">
+        <figure class="phone"><img src="assets/screens/needs.webp" alt="The patient profile: how the patient is, on a five-level scale, and what the patient needs, from eight services such as dialysis, intensive care and high-risk pregnancy." decoding="async"></figure>
+        <div class="feat-copy">
+          <p class="eyebrow">The patient</p>
+          <h3>Say what the patient needs</h3>
+          <p>Tell MAP-A Care how the patient is, what care the patient needs, what the family can pay, and how far the patient can walk. It matches that to what each hospital level offers.</p>
+          <ul class="ticks">
+            <li>Five plain-language status levels, chosen by the crew or the family</li>
+            <li>Eight services: isolation, normal delivery, operation, intensive care, newborn intensive care, high-risk pregnancy, dialysis and blood bank</li>
+            <li>Four payment choices, from free or assisted care only to any hospital</li>
+            <li>A setting for patients who walk slowly: older people, late pregnancy, a disability or an injury</li>
+          </ul>
+        </div>
+      </article>
+      <article class="feat-row flip">
+        <figure class="phone"><img src="assets/screens/result.webp" alt="The first-choice hospital with travel time, distance, level, services, emergency room, cost class and bed status, then two backup hospitals." decoding="async"></figure>
+        <div class="feat-copy">
+          <p class="eyebrow">The result</p>
+          <h3>The right hospital, and two backups</h3>
+          <p>The first choice comes with its travel time, its level and services, its cost class, and its free beds with the time of the report. Below it are the next two hospitals that fit, with the extra minutes each would cost if the first one turns the patient away.</p>
+          <ul class="ticks">
+            <li>A hospital that has not reported is shown as not reported, never as available</li>
+            <li>For the two most urgent levels the cost filter is lifted, as Republic Act No. 10932 requires</li>
+            <li>Turn-by-turn guidance by ambulance, or jeepney and walking steps for a commuting patient</li>
+          </ul>
+        </div>
+      </article>
+      <article class="feat-row">
+        <figure class="phone"><img src="assets/screens/gaps.webp" alt="Gap notes under a result: the payment gap, the need gap and the mobility gap, each in minutes." decoding="async"></figure>
+        <div class="feat-copy">
+          <p class="eyebrow">The gaps</p>
+          <h3>What money, a need or slow walking cost in minutes</h3>
+          <p>MAP-A Care shows how much longer the trip is because of what the family can pay, because the patient needs a particular service, or because the patient walks slowly. These are the minutes a planner can win back.</p>
+          <ul class="ticks">
+            <li>Payment gap: the extra time against the same patient with no cost limit</li>
+            <li>Need gap: the extra time against the same patient with no particular need</li>
+            <li>Mobility gap: the extra time for a slow walker on public transport</li>
+          </ul>
+        </div>
+      </article>
+      <article class="feat-row flip">
+        <figure class="phone"><img src="assets/screens/why.webp" alt="Every hospital and why: each hospital marked suitable or ruled out, with the reason, such as below Level 2, does not offer dialysis, or no emergency room." decoding="async"></figure>
+        <div class="feat-copy">
+          <p class="eyebrow">Every hospital, and why</p>
+          <h3>No black box</h3>
+          <p>One tap lists all 29 facilities with the reason each one was kept or ruled out: below the level the patient needs, a missing service, no emergency room, reported full, or above the payment class.</p>
+          <ul class="ticks">
+            <li>Stabilize first: when an open emergency room is much nearer than the right hospital for a critical patient, the app says so</li>
+            <li>A one-tap call to 911 on every hospital screen</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="hosp" id="planning">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">For the Provincial Health Office, the PDRRMO and LGUs</p>
+      <h2>Planning tools</h2>
+      <p>The same model, turned from one patient to the whole province. Each tool draws on the map and gives a table a planner can use.</p>
+    </header>
+    <div class="hosp-grid">
+      <div class="hosp-phones">
+        <figure class="phone"><img src="assets/screens/catchment.webp" alt="Catchment map: every place coloured by the hospital an ambulance would take a high-risk patient to, with a table of hospitals, towns and people." decoding="async"></figure>
+        <figure class="phone"><img src="assets/screens/surge.webp" alt="Surge assignment: fifteen patients from three towns placed in free beds without overfilling any hospital." decoding="async"></figure>
+      </div>
+      <div class="hosp-copy">
+        <ul class="ticks">
+          <li><b>Catchment map.</b> Which hospital each place would be sent to, for one kind of patient. It is redrawn in milliseconds when a hospital reports full.</li>
+          <li><b>Beds per person.</b> Beds within reach per 10,000 people, town by town, with bed deserts where no bed the patient can use is in reach.</li>
+          <li><b>Surge assignment.</b> Typhoon, eruption or road crash: many patients, few beds. Everyone is placed without overfilling a hospital, emergencies first, with the least total travel time.</li>
+          <li><b>Critical roads.</b> The roads whose closure would cut towns off from care or delay them most, for clearing first after a typhoon or lahar flow.</li>
+          <li><b>New Malasakit Centers.</b> Where free or assisted care would reach the most people, with a guarantee on how close the choice is to the best possible.</li>
+          <li><b>Bed dashboard.</b> Free beds and report age by municipality, and a form to enter a report.</li>
+        </ul>
+        <p class="notice"><b>Navigation and planning support, not triage.</b><span>MAP-A Care does not assess the patient and does not replace 911 or the judgment of an ambulance crew. In an emergency, call 911.</span></p>
+      </div>
+    </div>
+    <div class="beds">
+      <figure class="phone"><img src="assets/screens/roads.webp" alt="Critical roads ranked: roads whose closure would cut towns off from every suitable hospital, then roads that add the most delay." decoding="async"></figure>
+      <div class="beds-copy">
+        <p class="eyebrow">Before and after a typhoon</p>
+        <h3>Know which roads to clear first</h3>
+        <p>Each road an ambulance uses on the way to care is closed in turn, and the app ranks the closures by the people they would cut off and the minutes they would add. Roads that no ambulance route uses are skipped, which halves the work and changes nothing in the answer.</p>
+      </div>
+    </div>
+    <p class="fine status">MAP-A Care is in development. It has been tested only on synthetic data. No hospital has been contacted; free beds appear only where someone enters a report, and a report lapses after 12 hours.</p>
+  </div>
+</section>
+
+<section class="section alt" id="how">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">How it works</p>
+      <h2>From a patient to the right hospital, in six steps</h2>
+      <p>Every step follows a definition in the research paper and was checked against independently written code.</p>
+    </header>
+    <ol class="stops" style="--cols:3">
+      <li><span class="st">Step 1</span><h4>Hospital map</h4><p>Each hospital's level, services, emergency room and cost class, from the DOH registry and the DOH hospital classification.</p></li>
+      <li><span class="st">Step 2</span><h4>Patient profile</h4><p>How the patient is, what care the patient needs, what the family can pay, and how far the patient can walk.</p></li>
+      <li><span class="st">Step 3</span><h4>Suitability</h4><p>Level, services, emergency room, beds and cost: five checks for every hospital, with the cost check lifted in an emergency.</p></li>
+      <li><span class="st">Step 4</span><h4>Search and backups</h4><p>An exact shortest-path search on the ambulance roads or the jeepney network stops once the nearest suitable hospitals are found.</p></li>
+      <li><span class="st">Step 5</span><h4>Gaps</h4><p>The same search repeated without the cost limit, the need or the slow walking shows what each one costs in minutes.</p></li>
+      <li><span class="st">Step 6</span><h4>Planning</h4><p>Catchments, beds per person, surge assignment, critical roads and new Malasakit Center sites for the whole province.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="verified">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Verification</p>
+      <h2>Checked against independent reference code</h2>
+      <p>Each result was proven and then compared with a separately written implementation on random test instances.</p>
+    </header>
+    <dl class="stats">
+      <div><dt>hospital-routing queries, every one matching the reference</dt><dd>10,400</dd></div>
+      <div><dt>places on the catchment map, all agreeing with one search per place</dt><dd>11,474</dd></div>
+      <div><dt>of road closures that could delay a patient lay on the predicted shortest-path forest</dt><dd>100%</dd></div>
+      <div><dt>more patients placed by the surge assignment than by first come, first served</dt><dd>202</dd></div>
+      <div><dt>of the best possible coverage reached by the Malasakit site choice, at worst</dt><dd>82.5%</dd></div>
+      <div><dt>forged bed reports slipped into the mailbox, and none was accepted</dt><dd>200</dd></div>
+    </dl>
+    <p class="fine verify-note">All checks ran on synthetic test instances. None of these figures describes real Albay roads or hospitals.</p>
+  </div>
+</section>
+
+<section class="section alt" id="data">
+  <div class="wrap two-col">
+    <header class="sec-head">
+      <p class="eyebrow">Data</p>
+      <h2>Open sources only</h2>
+      <p>Every layer can be traced to a public register or a law, so anyone can check the work.</p>
+    </header>
+    <dl class="sources">
+      <div><dt>DOH registry</dt><dd>National Health Facility Registry: the 29 hospitals and infirmaries, their licensed beds, ownership and emergency rooms.</dd></div>
+      <div><dt>DOH (2012)</dt><dd>Hospital classification: the services each level must offer, which give each hospital its service list.</dd></div>
+      <div><dt>RA 11463</dt><dd>Malasakit Centers Act: every DOH hospital hosts a Malasakit Center, so it is free or assisted care.</dd></div>
+      <div><dt>RA 10932</dt><dd>Anti-Hospital Deposit Law: no deposit before emergency care, so the cost filter is lifted for emergencies.</dd></div>
+      <div><dt>MAP-A</dt><dd>Roads, jeepney, van and bus routes, fares and stops for the 18 LGUs, built on OpenStreetMap. © OpenStreetMap contributors, ODbL.</dd></div>
+      <div><dt>PSA</dt><dd>2020 Census of Population and Housing: town populations for beds per person and coverage.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section about" id="about">
+  <div class="wrap about-grid">
+    <span class="logo logo-seal" role="img" aria-label="Official logo of the Landmark-Anchored Research Initiative: routes and map pins meeting at a medical cross with the rod of Asclepius, over the banner Accessibility, Inequality and Emergency Routing, from open data and agent reports."></span>
+    <div class="about-copy">
+      <p class="eyebrow">About the project</p>
+      <h2>Right Hospital, Right Bed, Right Time</h2>
+      <p>A verified network model for mapping hospitals and routing patients in Albay by clinical need, live bed availability, and ability to pay. MAP-A Care is the app of the paper, built on the MAP-A transit atlas.</p>
+      <dl class="people">
+        <div><dt>Researchers</dt><dd>Peter John A. Brimbuela, Dave Justin Ll. De Asis, Yeaseong Shin</dd></div>
+        <div><dt>Research adviser</dt><dd>Dick Anthony M. Calleja</dd></div>
+        <div><dt>School</dt><dd>Legazpi City Science High School, Legazpi City, Albay</dd></div>
+        <div><dt>Category</dt><dd>Mathematics and Computational Sciences, Team</dd></div>
+      </dl>
+      <ul class="sdg" aria-label="Sustainable Development Goal targets">
+        <li>SDG 3.8 Health coverage</li>
+        <li>SDG 3.d Health risk readiness</li>
+        <li>SDG 3.1 and 3.2 Mothers and newborns</li>
+        <li>SDG 10.2 Inclusion</li>
+        <li>SDG 11.2 Transport for all</li>
+        <li>SDG 11.5 Disaster response</li>
+      </ul>
+      <p class="fine">Also by the team: <a href="https://pogi6969.github.io/MAP---A/">MAP-A, the Albay transit atlas</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section legal" id="legal">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Policies</p>
+      <h2>Privacy, terms and cookies</h2>
+      <p class="fine">Effective 14 October 2026</p>
+    </header>
+    <details id="privacy">
+      <summary><span>Privacy policy</span></summary>
+      <div class="policy">
+        <h3>What this site collects</h3>
+        <p>Nothing. This website has no sign-up, no forms that send data, no analytics and no tracking.</p>
+        <h3>Third-party services</h3>
+        <p>The typefaces load from Google Fonts, so your browser connects to Google's servers, which receive your IP address and browser details under Google's own privacy policy. The service hosting this page may keep standard server logs for security.</p>
+        <h3>The app</h3>
+        <p>MAP-A Care sets no cookies and has no analytics. To draw the map it fetches tiles, routes and place names from Esri, OpenStreetMap, OSRM and Nominatim, which receive your IP address as with any web request. The patient's status, needs, payment class and walking ability are used for the current search only and are not kept. Bed reports entered in the dashboard are kept only in your own browser.</p>
+        <h3>Installing MAP-A Care</h3>
+        <p>If you install MAP-A Care, your browser keeps a copy of the app and of this site on your device so they open without a signal. The copy stays on your device. Uninstalling the app or clearing the site's data deletes it.</p>
+        <h3>Your rights</h3>
+        <p>The Data Privacy Act of 2012 (Republic Act No. 10173) gives you rights over personal data about you. This site keeps no personal data, so there is nothing stored here to access, correct or delete.</p>
+      </div>
+    </details>
+    <details id="terms">
+      <summary><span>Terms and conditions</span></summary>
+      <div class="policy">
+        <h3>A research project</h3>
+        <p>MAP-A Care is a student research project. Hospitals, services, travel times, beds and planning results are for reference only. Travel times and planning results are model outputs, not measurements.</p>
+        <h3>Emergencies</h3>
+        <p>MAP-A Care is navigation and planning support, not triage. It does not assess the patient. Do not rely on it in place of 911 or the judgment of an ambulance crew. In an emergency, call 911.</p>
+        <h3>Hospitals and services</h3>
+        <p>Service lists follow each hospital's licensed level. A hospital may lack a service on a given day. Call ahead where you can.</p>
+        <h3>No affiliation</h3>
+        <p>MAP-A Care is not an official service of the DOH, the Provincial Health Office, the PDRRMO, the Provincial Government of Albay or any city or municipality.</p>
+        <h3>Map data</h3>
+        <p>Map data © OpenStreetMap contributors, available under the Open Database License. Population from Philippine Statistics Authority data.</p>
+        <h3>No warranty</h3>
+        <p>MAP-A Care is provided as is, without warranty of any kind. Its makers are not liable for loss or damage arising from its use. These terms are governed by the laws of the Republic of the Philippines.</p>
+      </div>
+    </details>
+    <details id="cookies">
+      <summary><span>Cookie policy</span></summary>
+      <div class="policy">
+        <p>This website sets no cookies and uses no tracking pixels or similar technologies.</p>
+        <p>If you install MAP-A Care, your browser stores this site's own files on your device so it works offline. Nothing about you is stored.</p>
+        <p>Google Fonts, which serves the typefaces, does not set cookies when delivering fonts. The service hosting this page may use its own cookies, covered by that service's policy.</p>
+      </div>
+    </details>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="#top" aria-label="MAP-A Care, back to top">
+        <span class="logo logo-mk" aria-hidden="true"></span>
+        <span class="wm" aria-hidden="true">MAP-A Care</span>
+      </a>
+      <p>Right hospital, right bed, right time · Legazpi City Science High School</p>
+    </div>
+    <nav aria-label="Policies">
+      <a href="#privacy">Privacy policy</a>
+      <a href="#terms">Terms and conditions</a>
+      <a href="#cookies">Cookie policy</a>
+    </nav>
+    <p class="fine">© 2026 MAP-A Care. Map data © OpenStreetMap contributors. Population from PSA data.</p>
+  </div>
+</footer>
+</div>
+<script id="care-site">
+(function () {
+  "use strict";
+  var root = document.getElementById("mapa-root");
+  if (!root) return;
+
+  /* Policy links open their section. */
+  function openTarget(id) {
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (el && el.tagName === "DETAILS") el.open = true;
+  }
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest) return;
+    var a = e.target.closest('a[href^="#"]');
+    if (a) openTarget(a.getAttribute("href").slice(1));
+  });
+  window.addEventListener("hashchange", function () { openTarget(location.hash.slice(1)); });
+  openTarget(location.hash.slice(1));
+
+  /* Install the app. The hosted site carries a web app manifest and a service worker, so browsers
+     that support it install MAP-A Care in one tap; everywhere else the steps for the device are shown. */
+  var installStatus = document.getElementById("install-status");
+  var installPrompt = null;
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var myPlat = isIOS ? "ios" : /Android/i.test(ua) ? "android" : "desktop";
+  var embedded = (function () { try { return window.self !== window.top; } catch (err) { return true; } })();
+  var hosted = !!document.querySelector('link[rel="manifest"]');
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var platTabs = Array.prototype.slice.call(root.querySelectorAll('.plat-tabs [role="tab"]'));
+
+  function sayInstall(msg) { if (installStatus) installStatus.textContent = msg; }
+  function runningInstalled() {
+    if (navigator.standalone === true) return true;
+    if (!window.matchMedia) return false;
+    return ["standalone", "minimal-ui", "window-controls-overlay"].some(function (m) {
+      return window.matchMedia("(display-mode: " + m + ")").matches;
+    });
+  }
+  function markInstalled(msg) {
+    Array.prototype.forEach.call(root.querySelectorAll("[data-install]"), function (el) { el.hidden = true; });
+    sayInstall(msg);
+  }
+  function manualHint() {
+    if (embedded) return "This copy of the page is shown inside another site, which blocks installing. Open the MAP-A Care website in Chrome, Edge or Safari to install it.";
+    if (isIOS) return "On iPhone and iPad, open the app in Safari, then add it from the Share menu. Follow these steps.";
+    return "Install MAP-A Care from your browser's menu with these steps. If it is already installed, open it from your apps.";
+  }
+  function selectPlat(plat, focus) {
+    platTabs.forEach(function (t) {
+      var on = t.getAttribute("data-plat") === plat;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var panel = document.getElementById(t.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !on;
+      if (on && focus) t.focus();
+    });
+  }
+  platTabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { selectPlat(t.getAttribute("data-plat")); });
+    t.addEventListener("keydown", function (e) {
+      var j = e.key === "ArrowRight" ? (i + 1) % platTabs.length
+        : e.key === "ArrowLeft" ? (i - 1 + platTabs.length) % platTabs.length
+        : e.key === "Home" ? 0 : e.key === "End" ? platTabs.length - 1 : -1;
+      if (j < 0) return;
+      e.preventDefault();
+      selectPlat(platTabs[j].getAttribute("data-plat"), true);
+    });
+  });
+  root.addEventListener("click", function (e) {
+    if (!e.target.closest) return;
+    var trigger = e.target.closest("[data-install]");
+    if (!trigger) return;
+    if (installPrompt) {
+      e.preventDefault();
+      var p = installPrompt;
+      installPrompt = null;
+      p.prompt();
+      p.userChoice.then(function (choice) {
+        sayInstall(choice && choice.outcome === "accepted"
+          ? "Installing MAP-A Care. It will appear on your home screen or in your app list."
+          : "Install cancelled. You can install MAP-A Care from this page at any time.");
+      }, function () {});
+      return;
+    }
+    sayInstall(manualHint());
+    selectPlat(myPlat);
+    var box = root.querySelector(".how-install");
+    if (trigger.tagName === "BUTTON" && box && box.scrollIntoView) box.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+  });
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    installPrompt = e;
+  });
+  window.addEventListener("appinstalled", function () {
+    installPrompt = null;
+    markInstalled("MAP-A Care is installed. Open it from your home screen or app list.");
+  });
+  selectPlat(myPlat);
+  if (!hosted) Array.prototype.forEach.call(root.querySelectorAll("[data-hosted-only]"), function (el) { el.hidden = true; });
+  if (runningInstalled()) markInstalled("MAP-A Care is installed on this device. You are using the app.");
+  else if (embedded) sayInstall(manualHint());
+  if (hosted && !embedded && "serviceWorker" in navigator && window.isSecureContext) {
+    var registerWorker = function () { navigator.serviceWorker.register("sw.js").catch(function () {}); };
+    if (document.readyState === "complete") registerWorker();
+    else window.addEventListener("load", registerWorker);
+  }
+})();
+</script>
+</body>
+</html>
